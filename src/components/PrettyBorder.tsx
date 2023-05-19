@@ -1,31 +1,38 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useRef } from "react";
+
+import useIsMobile from "@/hooks/use-is-mobile";
 
 interface Props {
   children: React.ReactNode;
 }
 
 const PrettyBorder = ({ children }: Props) => {
+  const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (event: MouseEvent) => {
-    const container = containerRef.current;
-    if (!container) return;
+  const handleMouseMove = useCallback(
+    (event: MouseEvent) => {
+      if (isMobile) return;
+      const container = containerRef.current;
+      if (!container) return;
 
-    const containerRect = container.getBoundingClientRect();
-    const centerX = containerRect.left + containerRect.width / 2;
-    const centerY = containerRect.top + containerRect.height / 2;
-    const angleX = (event.clientX - centerX) * 0.005;
-    const angleY = (event.clientY - centerY) * -0.009;
+      const containerRect = container.getBoundingClientRect();
+      const centerX = containerRect.left + containerRect.width / 2;
+      const centerY = containerRect.top + containerRect.height / 2;
+      const angleX = (event.clientX - centerX) * 0.005;
+      const angleY = (event.clientY - centerY) * -0.009;
 
-    container.style.transform = `perspective(1000px) rotateX(${angleY}deg) rotateY(${angleX}deg)`;
-  };
+      container.style.transform = `perspective(1000px) rotateX(${angleY}deg) rotateY(${angleX}deg)`;
+    },
+    [isMobile]
+  );
 
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, []);
+  }, [handleMouseMove]);
 
   return (
     <div

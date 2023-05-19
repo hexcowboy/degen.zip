@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import Input from "@/components/Input";
@@ -8,9 +8,30 @@ import PrettyBorder from "@/components/PrettyBorder";
 
 import "./page.css";
 
+enum PlaceholderOptions {
+  ENS = "Enter an ENS",
+  NFT = "Enter an NFT",
+  Address = "Enter an address",
+  Handle = "Enter a degen handle",
+}
+
 export default function Home() {
   const [value, setValue] = useState("");
   const [hitEnter, setHitEnter] = useState(false);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholderIndex(
+        (prevIndex) => (prevIndex + 1) % Object.keys(PlaceholderOptions).length
+      );
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentPlaceholder =
+    Object.values(PlaceholderOptions)[placeholderIndex];
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -26,7 +47,7 @@ export default function Home() {
           <Input
             value={value}
             setValue={setValue}
-            placeholder="Enter an NFT, ENS, or address"
+            placeholder={currentPlaceholder}
             onKeyPress={handleKeyPress}
             className="w-64 font-bold sm:w-96"
             type="search"
