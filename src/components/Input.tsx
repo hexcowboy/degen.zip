@@ -28,6 +28,7 @@ const TextInput = (
     type,
     value,
     onChange: (e) => setValue(e.target.value),
+    style: { WebkitBorderRadius: 0 },
   });
 };
 
