@@ -19,6 +19,7 @@
   width: 260px;
   height: 260px;
   animation: rotate 7s linear infinite, glow 4s ease-in-out infinite alternate;
+  z-index: -10;
 }
 
 @keyframes rotate {

@@ -14,13 +14,17 @@ const TextInput = (
   { value, setValue, type = "text", className, ...props }: Props,
   ref: React.Ref<Element>
 ) => {
+  let enterKeyHint;
+  if (type === "search") enterKeyHint = { enterkeyhint: "go" };
+
   return createElement("input", {
     ref,
     className: twMerge(
-      "rounded-xl h-12 text-xl drop-shadow dark:bg-black px-6 outline-none border border-transparent dark:border-neutral-700",
+      "!rounded-xl h-12 text-xl drop-shadow dark:bg-black px-6 outline-none border border-transparent dark:border-neutral-700",
       className
     ),
     ...props,
+    ...enterKeyHint,
     type,
     value,
     onChange: (e) => setValue(e.target.value),
