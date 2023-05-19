@@ -10,23 +10,26 @@ import "./page.css";
 
 export default function Home() {
   const [value, setValue] = useState("");
+  const [hitEnter, setHitEnter] = useState(false);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      // Perform search logic here
+      setHitEnter(true);
     }
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="rainbow">
+        {hitEnter && "hit enter"}
         <PrettyBorder>
           <Input
             value={value}
             setValue={setValue}
             placeholder="Enter an NFT, ENS, or address"
             onKeyPress={handleKeyPress}
-            className="font-bold w-64 sm:w-96"
+            className="w-64 font-bold sm:w-96"
+            type="search"
           />
           <div
             className={twMerge(
@@ -34,7 +37,7 @@ export default function Home() {
               value ? "opacity-100" : "opacity-0"
             )}
           >
-            Press enter to search
+            Press return to search
           </div>
         </PrettyBorder>
       </div>
