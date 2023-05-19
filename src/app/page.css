@@ -1,0 +1,40 @@
+.rainbow::before {
+  content: "";
+  top: calc(50% - 130px);
+  left: calc(50% - 130px);
+  position: absolute;
+  filter: blur(45px);
+  transform: translateZ(0);
+  background: conic-gradient(
+    from 0deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  );
+  border-radius: 50%;
+  width: 260px;
+  height: 260px;
+  animation: rotate 7s linear infinite, glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes glow {
+  0% {
+    opacity: 0.05;
+  }
+  100% {
+    opacity: 0.15;
+  }
+}
