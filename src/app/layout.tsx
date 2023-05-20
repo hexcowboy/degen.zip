@@ -12,7 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col overflow-x-hidden transition-colors dark:bg-black dark:text-white">
+      <body className="flex min-h-screen w-screen flex-col overflow-x-hidden transition-colors dark:bg-black dark:text-white">
         {children}
       </body>
     </html>

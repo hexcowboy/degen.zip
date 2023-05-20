@@ -2,6 +2,8 @@
 
 import blockies from "blockies-ts";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -19,6 +21,7 @@ enum PlaceholderOptions {
 }
 
 export default function Home() {
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -41,41 +44,41 @@ export default function Home() {
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
-        // TODO if a search item is highlighted, navigate to it
-        console.log(selectedRoute);
+        if (selectedRoute) router.push(selectedRoute);
         inputRef.current?.blur();
       }
     },
-    [selectedRoute]
+    [selectedRoute, router]
   );
 
   const handleChange = useCallback((value: string) => {
     setValue(value.replace(/[^A-Za-z0-9.@]|^(?!@)/g, ""));
   }, []);
 
-  const ClearButton = (
-    <button
-      key="clear"
-      className="cursor-pointer rounded-xl bg-neutral-200 px-6 py-2 text-center font-mono dark:bg-neutral-800"
-      onClick={() => setValue("")}
-    >
-      Clear
-    </button>
-  );
-
   useEffect(() => {
     if (value) {
+      const ClearButton = (
+        <button
+          key="clear"
+          className="cursor-pointer rounded-xl bg-neutral-200 px-6 py-2 text-center font-mono dark:bg-neutral-800"
+          onClick={() => setValue("")}
+        >
+          Clear
+        </button>
+      );
+
       if (/^(0x)?[0-9a-fA-F]{40}$/i.test(value)) {
         const imgSrc = blockies.create({ seed: value }).toDataURL();
         const prefix = value.slice(0, 5);
         const suffix = value.slice(-4);
 
         setResults([
-          <div
+          <Link
             key="address"
             className={twMerge(
               "flex cursor-pointer items-center gap-4 rounded-xl bg-blue-300 px-6 py-4 font-mono dark:bg-blue-700"
             )}
+            href={`/${value}`}
           >
             <Image
               src={imgSrc}
@@ -88,7 +91,7 @@ export default function Home() {
               Address: {prefix}...{suffix}
             </span>
             <span className="ml-auto font-sans text-xl">→</span>
-          </div>,
+          </Link>,
           ClearButton,
         ]);
         setSelectedRoute(`/${value}`);
@@ -104,7 +107,7 @@ export default function Home() {
     } else {
       setSelectedRoute(undefined);
     }
-  }, [setResults, value, ClearButton]);
+  }, [setResults, value]);
 
   return (
     <main className="rainbow flex grow flex-col items-center p-24">
@@ -119,7 +122,7 @@ export default function Home() {
             value={value}
             setValue={handleChange}
             placeholder={currentPlaceholder}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             className="w-68 font-bold sm:w-96"
             type="search"
             ref={inputRef}
@@ -128,7 +131,7 @@ export default function Home() {
 
         <PrettyBorder
           className={twMerge(
-            "mt-4 flex flex-col gap-3 transition-opacity",
+            "relative z-10 mt-4 flex flex-col gap-3 transition-opacity",
             results.length && value ? "opacity-100" : "opacity-0"
           )}
         >
