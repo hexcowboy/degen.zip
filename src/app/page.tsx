@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import Input from "@/components/Input";
 import PrettyBorder from "@/components/PrettyBorder";
+import Tilty from "@/components/Tilty";
 
 import "./page.css";
 
@@ -16,9 +17,10 @@ enum PlaceholderOptions {
 }
 
 export default function Home() {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState("");
-  const [hitEnter, setHitEnter] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [results, setResults] = useState<Array<ReactNode>>([]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -35,32 +37,54 @@ export default function Home() {
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      setHitEnter(true);
+      // TODO if a search item is highlighted, navigate to it
+      inputRef.current?.blur();
     }
   };
 
+  const handleChange = (value: string) => {
+    setValue(value.replace(/[^A-Za-z0-9.@]|^(?!@)/g, ""));
+  };
+
+  useEffect(() => {
+    if (value) {
+      setResults([
+        <div key="no-results-found" className="px-4 py-2">
+          No results found
+        </div>,
+      ]);
+    }
+  }, [setResults, value]);
+
   return (
-    <main className="flex grow flex-col items-center justify-center p-24">
-      <div className="rainbow">
+    <main className="rainbow flex grow flex-col items-center p-24">
+      <Tilty
+        className={twMerge(
+          "transition-[margin]",
+          results.length && value ? "mt-0" : "mt-20"
+        )}
+      >
         <PrettyBorder>
           <Input
             value={value}
-            setValue={setValue}
+            setValue={handleChange}
             placeholder={currentPlaceholder}
             onKeyPress={handleKeyPress}
             className="w-64 font-bold sm:w-96"
             type="search"
+            ref={inputRef}
           />
-          <div
-            className={twMerge(
-              "absolute -bottom-6 right-0 mr-6 self-end text-xs transition-opacity",
-              value ? "opacity-100" : "opacity-0"
-            )}
-          >
-            Press return to search
-          </div>
         </PrettyBorder>
-      </div>
+
+        <PrettyBorder
+          className={twMerge(
+            "mt-4 transition-opacity",
+            results.length && value ? "opacity-100" : "opacity-0"
+          )}
+        >
+          {results.map((result) => result)}
+        </PrettyBorder>
+      </Tilty>
     </main>
   );
 }
