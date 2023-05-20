@@ -20,7 +20,7 @@ const TextInput = (
   return createElement("input", {
     ref,
     className: twMerge(
-      "rounded-xl h-12 text-xl drop-shadow bg-white dark:bg-black px-6 outline-none border border-transparent dark:border-neutral-700",
+      "rounded-xl h-12 text-xl drop-shadow bg-white dark:bg-black px-4 outline-none border border-transparent dark:border-neutral-700 overflow-hidden",
       className
     ),
     ...props,

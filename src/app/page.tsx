@@ -1,6 +1,8 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import blockies from "blockies-ts";
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import Input from "@/components/Input";
@@ -20,7 +22,11 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [results, setResults] = useState<Array<ReactNode>>([]);
+  const [results, setResults] = useState<Array<React.ReactElement>>([]);
+  const [selectedRoute, setSelectedRoute] = useState<string>();
+
+  const currentPlaceholder =
+    Object.values(PlaceholderOptions)[placeholderIndex];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -32,29 +38,73 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const currentPlaceholder =
-    Object.values(PlaceholderOptions)[placeholderIndex];
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        // TODO if a search item is highlighted, navigate to it
+        console.log(selectedRoute);
+        inputRef.current?.blur();
+      }
+    },
+    [selectedRoute]
+  );
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      // TODO if a search item is highlighted, navigate to it
-      inputRef.current?.blur();
-    }
-  };
-
-  const handleChange = (value: string) => {
+  const handleChange = useCallback((value: string) => {
     setValue(value.replace(/[^A-Za-z0-9.@]|^(?!@)/g, ""));
-  };
+  }, []);
+
+  const ClearButton = (
+    <button
+      key="clear"
+      className="cursor-pointer rounded-xl bg-neutral-200 px-6 py-2 text-center font-mono dark:bg-neutral-800"
+      onClick={() => setValue("")}
+    >
+      Clear
+    </button>
+  );
 
   useEffect(() => {
     if (value) {
-      setResults([
-        <div key="no-results-found" className="px-4 py-2">
-          No results found
-        </div>,
-      ]);
+      if (/^(0x)?[0-9a-fA-F]{40}$/i.test(value)) {
+        const imgSrc = blockies.create({ seed: value }).toDataURL();
+        const prefix = value.slice(0, 5);
+        const suffix = value.slice(-4);
+
+        setResults([
+          <div
+            key="address"
+            className={twMerge(
+              "flex cursor-pointer items-center gap-4 rounded-xl bg-blue-300 px-6 py-4 font-mono dark:bg-blue-700"
+            )}
+          >
+            <Image
+              src={imgSrc}
+              alt="Address blockie"
+              className="mr-2 inline-block h-8 w-8 rounded-lg"
+              width={32}
+              height={32}
+            />
+            <span>
+              Address: {prefix}...{suffix}
+            </span>
+            <span className="ml-auto font-sans text-xl">→</span>
+          </div>,
+          ClearButton,
+        ]);
+        setSelectedRoute(`/${value}`);
+      } else {
+        setResults([
+          <div key="no-results-found" className="px-4 py-2 text-lg">
+            No results found
+          </div>,
+          ClearButton,
+        ]);
+        setSelectedRoute(undefined);
+      }
+    } else {
+      setSelectedRoute(undefined);
     }
-  }, [setResults, value]);
+  }, [setResults, value, ClearButton]);
 
   return (
     <main className="rainbow flex grow flex-col items-center p-24">
@@ -70,7 +120,7 @@ export default function Home() {
             setValue={handleChange}
             placeholder={currentPlaceholder}
             onKeyPress={handleKeyPress}
-            className="w-64 font-bold sm:w-96"
+            className="w-68 font-bold sm:w-96"
             type="search"
             ref={inputRef}
           />
@@ -78,7 +128,7 @@ export default function Home() {
 
         <PrettyBorder
           className={twMerge(
-            "mt-4 transition-opacity",
+            "mt-4 flex flex-col gap-3 transition-opacity",
             results.length && value ? "opacity-100" : "opacity-0"
           )}
         >
