@@ -14,7 +14,11 @@ module.exports = {
       },
 
       height: {
-        screen: ["100vh /* fallback */", "100svh"],
+        screen: ["100vh", "100dvh"],
+      },
+
+      minHeight: {
+        screen: ["100vh", "100svh"],
       },
     },
   },

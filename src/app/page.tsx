@@ -40,9 +40,8 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+    <main className="flex grow flex-col items-center justify-center p-24">
       <div className="rainbow">
-        {hitEnter && "hit enter"}
         <PrettyBorder>
           <Input
             value={value}
