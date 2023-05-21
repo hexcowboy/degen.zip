@@ -10,6 +10,7 @@ import { twMerge } from "tailwind-merge";
 import Input from "@/components/Input";
 import PrettyBorder from "@/components/PrettyBorder";
 import Tilty from "@/components/Tilty";
+import { ADDRESS_REGEX } from "@/ethereum/regex";
 
 import "./page.css";
 
@@ -67,7 +68,7 @@ export default function Home() {
         </button>
       );
 
-      if (/^(0x)?[0-9a-fA-F]{40}$/i.test(value)) {
+      if (ADDRESS_REGEX.test(value)) {
         const imgSrc = blockies.create({ seed: value }).toDataURL();
         const prefix = value.slice(0, 5);
         const suffix = value.slice(-4);

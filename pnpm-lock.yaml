@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  '@airstack/airstack-react':
+    specifier: ^0.2.1
+    version: 0.2.1(react-dom@18.2.0)(react@18.2.0)
   '@types/node':
     specifier: 20.2.1
     version: 20.2.1
@@ -37,6 +40,9 @@ dependencies:
   react-dom:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
+  react-loading-skeleton:
+    specifier: ^3.3.1
+    version: 3.3.1(react@18.2.0)
   tailwind-merge:
     specifier: ^1.12.0
     version: 1.12.0
@@ -62,6 +68,16 @@ devDependencies:
     version: 0.3.0(@trivago/prettier-plugin-sort-imports@4.1.1)(prettier@2.8.8)
 
 packages:
+
+  /@airstack/airstack-react@0.2.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-7x474vJMJznu/mLqi7XPiA7c0VRGsOETHj5wA3jSuvJBgggnL9LvYjVs4MQFEVuO/rlK6aS5F0QReSnrzRINaw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /@alloc/quick-lru@5.2.0:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -2505,6 +2521,14 @@ packages:
 
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+    dev: false
+
+  /react-loading-skeleton@3.3.1(react@18.2.0):
+    resolution: {integrity: sha512-NilqqwMh2v9omN7LteiDloEVpFyMIa0VGqF+ukqp0ncVlYu1sKYbYGX9JEl+GtOT9TKsh04zCHAbavnQ2USldA==}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react@18.2.0:
