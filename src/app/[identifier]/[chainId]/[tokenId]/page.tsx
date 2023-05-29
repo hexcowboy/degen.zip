@@ -1,5 +1,5 @@
+import Header from "@/components/Header";
 import NFTGrid from "@/components/NFTGrid";
-import nftProjects from "@/data/nfts.json";
 import { ADDRESS_REGEX, ENS_REGEX } from "@/ethereum/regex";
 
 interface Props {
@@ -10,10 +10,14 @@ interface Props {
     // - ETH contract address
     // - Degen @handle
     identifier: string;
+    chainId: number;
+    tokenId: number;
   };
 }
 
-export default function Page({ params: { identifier } }: Props) {
+export default function Page({
+  params: { identifier, chainId, tokenId },
+}: Props) {
   let content: React.ReactElement | undefined;
 
   if (ADDRESS_REGEX.test(identifier)) {
@@ -21,12 +25,7 @@ export default function Page({ params: { identifier } }: Props) {
   } else if (ENS_REGEX.test(identifier)) {
     content = <div>ENS</div>;
   } else {
-    nftProjects.forEach((project) => {
-      if (project.slug === identifier) {
-        content = <NFTGrid address={project.address} chainId={1} />;
-      }
-    });
-    if (!content) content = <div>Invalid identifier</div>;
+    content = <div>Invalid identifier</div>;
   }
 
   return content;

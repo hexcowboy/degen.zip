@@ -1,3 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.rainbow::before {
+  content: "";
+  top: calc(50% - 300px);
+  left: calc(50% - 300px);
+  position: fixed;
+  filter: blur(65px);
+  transform: translateZ(0);
+  background: conic-gradient(
+    from 0deg,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  );
+  border-radius: 50%;
+  width: 600px;
+  height: 600px;
+  animation: rotate 12s linear infinite, glow 4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes glow {
+  0% {
+    opacity: 0.05;
+  }
+  100% {
+    opacity: 0.15;
+  }
+}

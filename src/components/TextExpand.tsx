@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { twMerge } from "tailwind-merge";
 
 interface Props {
@@ -24,7 +25,7 @@ const TextComponent: React.FC<Props> = ({ text }) => {
           isExpanded ? "max-h-[1000px]" : "max-h-12"
         )}
       >
-        {text}
+        <ReactMarkdown>{text}</ReactMarkdown>
       </div>
       {!isExpanded ? (
         <button

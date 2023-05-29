@@ -10,9 +10,8 @@ import { twMerge } from "tailwind-merge";
 import Input from "@/components/Input";
 import PrettyBorder from "@/components/PrettyBorder";
 import Tilty from "@/components/Tilty";
+import { searchNftProjects } from "@/data/search";
 import { ADDRESS_REGEX } from "@/ethereum/regex";
-
-import "./page.css";
 
 enum PlaceholderOptions {
   ENS = "Enter an ENS",
@@ -52,10 +51,6 @@ export default function Home() {
     [selectedRoute, router]
   );
 
-  const handleChange = useCallback((value: string) => {
-    setValue(value.replace(/[^A-Za-z0-9.@]|^(?!@)/g, ""));
-  }, []);
-
   useEffect(() => {
     if (value) {
       const ClearButton = (
@@ -76,9 +71,7 @@ export default function Home() {
         setResults([
           <Link
             key="address"
-            className={twMerge(
-              "flex cursor-pointer items-center gap-4 rounded-xl bg-blue-300 px-6 py-4 font-mono dark:bg-blue-700"
-            )}
+            className="flex cursor-pointer items-center gap-4 rounded-xl bg-blue-300 px-6 py-4 font-mono dark:bg-blue-700"
             href={`/${value}`}
           >
             <Image
@@ -97,18 +90,61 @@ export default function Home() {
         ]);
         setSelectedRoute(`/${value}`);
       } else {
-        setResults([
-          <div key="no-results-found" className="px-4 py-2 text-lg">
-            No results found
-          </div>,
-          ClearButton,
-        ]);
-        setSelectedRoute(undefined);
+        const searchResults = searchNftProjects(value);
+        if (searchResults.length) {
+          setResults(
+            searchResults.map((item) => {
+              const isSelected = selectedRoute === `/${item.slug}`;
+              const handleHover = () => {
+                setSelectedRoute(`/${item.slug}`);
+              };
+
+              return (
+                <Link
+                  key={item.address}
+                  className={twMerge(
+                    "flex cursor-pointer items-center gap-4 rounded-xl px-6 py-4 font-mono opacity-90 hover:bg-blue-300 dark:hover:bg-blue-700",
+                    isSelected
+                      ? "bg-blue-300 dark:bg-blue-700"
+                      : "bg-neutral-100 dark:bg-neutral-900"
+                  )}
+                  href={`/${item.slug}`}
+                  onMouseEnter={handleHover}
+                >
+                  <Image
+                    src={item.image}
+                    alt={`${item.name} project logo`}
+                    className="mr-2 inline-block h-8 w-8 rounded-lg"
+                    width={32}
+                    height={32}
+                  />
+                  <span>{item.name}</span>
+                  <span className="ml-auto font-sans text-xl">→</span>
+                </Link>
+              );
+            })
+          );
+          if (searchResults[0] && selectedRoute === undefined)
+            setSelectedRoute(`/${searchResults[0].slug}`);
+        } else {
+          setResults([
+            <div key="no-results-found" className="px-4 py-2 text-lg">
+              No results found
+            </div>,
+            ClearButton,
+          ]);
+          setSelectedRoute(undefined);
+        }
       }
     } else {
       setSelectedRoute(undefined);
     }
-  }, [setResults, value]);
+  }, [setResults, value, selectedRoute]);
+
+  const handleChange = (value: string) => {
+    setSelectedRoute(undefined);
+    setValue(value);
+  };
 
   return (
     <main className="rainbow flex grow flex-col items-center p-24">
@@ -127,6 +163,7 @@ export default function Home() {
             className="w-68 font-bold sm:w-96"
             type="search"
             ref={inputRef}
+            autoFocus
           />
         </PrettyBorder>
 
